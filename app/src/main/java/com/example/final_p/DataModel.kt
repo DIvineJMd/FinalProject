@@ -11,12 +11,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
-
+sealed interface Concode {
+    data class Success(val concode: String) : Concode
+    object Error : Concode
+    object Loading : Concode
+}
 class DataModel : ViewModel() {
+    private var _countyCode by mutableStateOf<Concode>(Concode.Loading)
 
-    private var _countyCode by mutableStateOf("abhi nhi aaya")
 
-    fun country(): String {
+
+    fun country(): Concode {
         return _countyCode
     }
 
@@ -24,18 +29,16 @@ class DataModel : ViewModel() {
 
             val geocoder = Geocoder(context, Locale.getDefault())
             try {
+                val geocoder = Geocoder(context, Locale.getDefault())
                 val addresses = geocoder.getFromLocation(lat, long, 1)
-                if (addresses != null) {
-                    _countyCode = if (addresses.isNotEmpty()) {
-                        (addresses[0].countryCode ?: "NULL")
-                    } else {
-                        "NULL"
-                    }
+                _countyCode = if (addresses != null && addresses.isNotEmpty()) {
+                    Concode.Success(addresses[0].countryCode ?: "NULL")
+                } else {
+                    Concode.Error
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                _countyCode = "NULL"
-            }
+                _countyCode = Concode.Error            }
 
     }
 }

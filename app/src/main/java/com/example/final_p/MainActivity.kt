@@ -62,8 +62,8 @@ class MainActivity : ComponentActivity() {
                                         onGetCurrentLocationFailed = {})
                                     navController.navigate("newspage")
                                 },
-                                onPermissionDenied = { navController.popBackStack() },
-                                { navController.popBackStack() }
+                                onPermissionDenied = {  },
+                                {  }
                             )
 
                         }
